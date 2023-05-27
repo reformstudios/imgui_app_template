@@ -41,8 +41,6 @@ class MyApp : public App<MyApp>
           log.AddLog("test\n");
           log.AddLog("test\n");
 
-
-
       }
 
     }
