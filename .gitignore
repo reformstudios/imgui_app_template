@@ -1,2 +1,50 @@
+# Compiled Object files, Static and Dynamic libs (Shared Objects)
+*.o
+*.a
+*.lib
+*.dll
+*.so
+*.dylib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# CMake build directory
+build/
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+CMakeScripts/
+Testing/
+
+# Visual Studio Code specific files
+.vscode/
+
+# Xcode specific files
+*.xcodeproj/
+*.xcworkspace/
+
+# Eclipse specific files
+.cproject
+.project
+.settings/
+
+# CLion specific files
 .idea/
-cmake-build-*
+*.iml
+*.iws
+out/
+
+# Compiled binary output directory
+bin/
+
+# Dependency directories
+dependencies/
+
+# Miscellaneous
+.DS_Store
+Thumbs.db
+*.tmp
