@@ -3,7 +3,7 @@
 
 void update_log()
 {
-  static bool show_app_log = false;
+  static bool show_app_log = true;
 
   ShowExampleAppLog(&show_app_log);
 }
@@ -130,7 +130,7 @@ void ExampleAppLog::Draw(const char* title, bool* p_open)
 // Demonstrate creating a simple log window with basic filtering.
 void ShowExampleAppLog(bool* p_open)
 {
-    static ExampleAppLog log;
+    ExampleAppLog& log = GetExampleAppLog();
 
     // For the demo: add a debug button _BEFORE_ the normal log window contents
     // We take advantage of a rarely used feature: multiple calls to Begin()/End() are appending to the _same_ window.
@@ -151,8 +151,15 @@ void ShowExampleAppLog(bool* p_open)
             counter++;
         }
     }
+
     ImGui::End();
 
     // Actually call in the regular Log helper (which will Begin() into the same window as we just did)
     log.Draw("Example: Log", p_open);
+}
+
+// Definition of GetExampleAppLog function to access the log variable
+ExampleAppLog& GetExampleAppLog() {
+    static ExampleAppLog log;
+    return log;
 }

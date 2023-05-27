@@ -1,5 +1,6 @@
 #pragma once
 #include "imgui.h"
+#include "panels/log.h"
 #include <iostream>
 #include <cstdlib>
 #include "backends/imgui_impl_glfw.h"
@@ -101,6 +102,8 @@ class App
       {
         glfwPollEvents();
 
+
+
         // Start the Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -110,6 +113,7 @@ class App
         ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
 
         Update();
+
 
         // Rendering
         ImGui::Render();

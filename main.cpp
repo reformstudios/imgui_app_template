@@ -10,7 +10,6 @@
 // Forward Declarations
 void ShowExampleAppLog(bool* p_open);
 
-
 class MyApp : public App<MyApp>
 {
   ExampleAppLog log;  // Define the log variable as a member of the class
@@ -30,17 +29,19 @@ class MyApp : public App<MyApp>
       {
           static float f = 0.0f;
           static int counter = 0;
+          ExampleAppLog& log = GetExampleAppLog();
+
 
           update_toolbar();
           update_properties();
           update_node_graph();
           update_viewer();
           update_console();
-          log.AddLog("test\n");
           update_log();
-          log.AddLog("test\n");
-          log.AddLog("test\n");
 
+
+
+          // log.AddLog("yipee!\n");
       }
 
     }

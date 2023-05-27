@@ -20,6 +20,10 @@ struct ExampleAppLog
     void Draw(const char* title, bool* p_open = NULL); // Draw the log window
 };
 
-void ShowExampleAppLog(bool* p_open); // Declaration of ShowExampleAppLog function
+// Function declaration for accessing the log variable
+ExampleAppLog& GetExampleAppLog();
+
+// Function declaration for showing the log window
+void ShowExampleAppLog(bool* p_open);
 
 #endif // LOG_H
