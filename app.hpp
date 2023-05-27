@@ -58,6 +58,9 @@ class App
       glfwMakeContextCurrent(window);
       glfwSwapInterval(1); // Enable vsync
 
+      // setup callbacks
+      glfwSetKeyCallback(window, &Derived::KeyCallback);
+
       // Setup Dear ImGui context
       IMGUI_CHECKVERSION();
       ImGui::CreateContext();
@@ -115,6 +118,8 @@ class App
         Update();
 
 
+
+
         // Rendering
         ImGui::Render();
         int display_w, display_h;
@@ -125,6 +130,7 @@ class App
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         glfwSwapBuffers(window);
+
       }
     }
 
@@ -137,6 +143,8 @@ class App
     {
       static_cast<Derived*>(this)->StartUp();
     };
+
+
 
     // Clearcolor
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
@@ -151,3 +159,5 @@ class App
 
 
 };
+
+

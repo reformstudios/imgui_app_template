@@ -29,7 +29,6 @@ class MyApp : public App<MyApp>
       {
           static float f = 0.0f;
           static int counter = 0;
-          ExampleAppLog& log = GetExampleAppLog();
 
 
           update_toolbar();
@@ -38,17 +37,29 @@ class MyApp : public App<MyApp>
           update_viewer();
           update_console();
           update_log();
+          // Update the key state
+        if (g_KeyPressed) {
+            ExampleAppLog& log = GetExampleAppLog();
+            log.AddLog("Key pressed: %d\n", g_KeyPressedCode);
+            g_KeyPressed = false;
+            g_KeyPressedCode = -1;
+        }
 
-
-
-          // log.AddLog("yipee!\n");
       }
 
     }
 
+    static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+    {
+      if (action == GLFW_PRESS) {
+          g_KeyPressed = true;
+          g_KeyPressedCode = key;
+      }
+    }
+
   private:
-    bool show_demo_window = true;
-    bool show_another_window = true;
+    static bool g_KeyPressed;
+    static int g_KeyPressedCode;
 };
 
 int main(int, char**)
@@ -58,3 +69,6 @@ int main(int, char**)
 
   return 0;
 }
+
+bool MyApp::g_KeyPressed    = false;
+int MyApp::g_KeyPressedCode = -1;
