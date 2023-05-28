@@ -24,29 +24,27 @@ class MyApp : public App<MyApp>
 
     void Update()
     {
-
-      // 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
       {
-          static float f = 0.0f;
-          static int counter = 0;
+        static float f = 0.0f;
+        static int counter = 0;
 
+        update_toolbar();
+        update_properties();
+        update_node_graph();
+        update_viewer();
+        update_console();
+        update_log();
 
-          update_toolbar();
-          update_properties();
-          update_node_graph();
-          update_viewer();
-          update_console();
-          update_log();
-          // Update the key state
+        // Callbacks
+
+        // Update the key state
         if (g_KeyPressed) {
             ExampleAppLog& log = GetExampleAppLog();
             log.AddLog("Key pressed: %d\n", g_KeyPressedCode);
             g_KeyPressed = false;
             g_KeyPressedCode = -1;
         }
-
       }
-
     }
 
     static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)

@@ -23,7 +23,13 @@ FetchContent_Declare(
         GIT_TAG docking
 )
 
-FetchContent_MakeAvailable(glew glfw imgui)
+FetchContent_Declare(
+        imguinodeeditor
+        GIT_REPOSITORY https://github.com/thedmd/imgui-node-editor
+        GIT_TAG master
+)
+
+FetchContent_MakeAvailable(glew glfw imgui imguinodeeditor)
 
 # FetchContent_Declare() normally supports EXCLUDE_FROM_ALL but apparently there is a bug
 # See https://gitlab.kitware.com/cmake/cmake/-/issues/20167
@@ -57,6 +63,18 @@ add_executable(${EXECUTABLE_NAME}
         ${imgui_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp
         ${imgui_SOURCE_DIR}/backends/imgui_impl_glfw.h
 
+        ${imguinodeeditor_SOURCE_DIR}/imgui_node_editor.h
+        # ${imguinodeeditor_SOURCE_DIR}/imgui_node_editor.cpp
+
+        # ${imguinodeeditor_SOURCE_DIR}/crude_json.h
+        # ${imguinodeeditor_SOURCE_DIR}/imgui_bezier_math.h
+        # ${imguinodeeditor_SOURCE_DIR}/imgui_canvas.h
+        # ${imguinodeeditor_SOURCE_DIR}/imgui_extra_math.h
+        # ${imguinodeeditor_SOURCE_DIR}/imgui_node_editor_internal.h
+
+        # ${imguinodeeditor_SOURCE_DIR}/crude_json.cpp
+        # ${imguinodeeditor_SOURCE_DIR}/imgui_canvas.cpp
+        # ${imguinodeeditor_SOURCE_DIR}/imgui_node_editor_api.cpp
 
         )
 
@@ -77,6 +95,7 @@ target_compile_definitions(${EXECUTABLE_NAME}
 # Set the include path
 target_include_directories(${EXECUTABLE_NAME}
         PRIVATE
+        ${imguinodeeditor_SOURCE_DIR}/
         ${imgui_SOURCE_DIR}/
         )
 

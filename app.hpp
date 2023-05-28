@@ -1,6 +1,5 @@
 #pragma once
 #include "imgui.h"
-#include "panels/log.h"
 #include <iostream>
 #include <cstdlib>
 #include "backends/imgui_impl_glfw.h"
@@ -9,12 +8,19 @@
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h> // Will drag system OpenGL headers
 
+#include "imgui_node_editor.h"
 
+//------------------------------------------------------------------------------
+namespace ed = ax::NodeEditor;
+
+//------------------------------------------------------------------------------
 static void glfw_error_callback(int error, const char* description)
 {
     fprintf(stderr, "GLFW Error %d: %s\n", error, description);
 }
 
+
+//------------------------------------------------------------------------------
 template <typename Derived>
 class App
 {
@@ -138,11 +144,16 @@ class App
       bool show_demo_window = true;
       bool show_another_window = true;
 
+
+
     }
 
     ~App()
     {
-      // Destructor : Cleanup
+      //------------------------------------------------------------------------------
+      ed::DestroyEditor(m_Context);
+
+      //------------------------------------------------------------------------------
       ImGui_ImplOpenGL3_Shutdown();
       ImGui_ImplGlfw_Shutdown();
       ImGui::DestroyContext();
@@ -153,6 +164,7 @@ class App
 
     void Run()
     {
+
       // Our initial State
       StartUp();
 
@@ -160,8 +172,6 @@ class App
       while(!glfwWindowShouldClose(window))
       {
         glfwPollEvents();
-
-
 
         // Start the Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
@@ -173,9 +183,28 @@ class App
         ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
 
         Update();
+
+        //------------------------------------------------------------------------------
+        // ed::SetCurrentEditor(m_Context);
+        // ed::Begin("My Editor", ImVec2(0.0, 0.0f));
+        // int uniqueId = 1;
+        // // Start drawing nodes.
+        // ed::BeginNode(uniqueId++);
+        //     ImGui::Text("Node A");
+        //     ed::BeginPin(uniqueId++, ed::PinKind::Input);
+        //         ImGui::Text("-> In");
+        //     ed::EndPin();
+        //     ImGui::SameLine();
+        //     ed::BeginPin(uniqueId++, ed::PinKind::Output);
+        //         ImGui::Text("Out ->");
+        //     ed::EndPin();
+        // ed::EndNode();
+        // ed::End();
+        // ed::SetCurrentEditor(nullptr);
+
+
+        //------------------------------------------------------------------------------
         ImGui::PopFont();
-
-
 
         // Rendering
         ImGui::Render();
@@ -198,7 +227,15 @@ class App
 
     void StartUp()
     {
+      //------------------------------------------------------------------------------
+      ax::NodeEditor::Config config;
+      config.SettingsFile = "Simple.json";
+      m_Context = ed::CreateEditor(&config);
+
+
+      //------------------------------------------------------------------------------
       static_cast<Derived*>(this)->StartUp();
+
     };
 
 
@@ -208,15 +245,12 @@ class App
 
     // imgui io
     ImGuiIO io;
-
     ImFont* mainfont;
+    ed::EditorContext* m_Context = nullptr;
 
   private:
     // Private window pointer
     GLFWwindow* window;
-
-
-
 };
 
 
