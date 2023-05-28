@@ -1,74 +1,63 @@
-#include "app.hpp"
-#include "panels/toolbar.cpp"
-#include "panels/node_graph.cpp"
-#include "panels/console.cpp"
-#include "panels/log.cpp"
-#include "panels/log.h"
-#include "panels/viewer.cpp"
-#include "panels/properties.cpp"
+# include <imgui.h>
+# include <imgui_node_editor.h>
+# include <application.h>
 
-// Forward Declarations
-void ShowExampleAppLog(bool* p_open);
+namespace ed = ax::NodeEditor;
 
-class MyApp : public App<MyApp>
+struct Example:
+    public Application
 {
-  ExampleAppLog log;  // Define the log variable as a member of the class
+    using Application::Application;
 
-  public:
-    MyApp() = default;
-    ~MyApp() = default;
-
-    void StartUp()
+    void OnStart() override
     {
+        ed::Config config;
+        config.SettingsFile = "Simple.json";
+        m_Context = ed::CreateEditor(&config);
     }
 
-    void Update()
+    void OnStop() override
     {
-
-      // 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
-      {
-          static float f = 0.0f;
-          static int counter = 0;
-
-
-          update_toolbar();
-          update_properties();
-          update_node_graph();
-          update_viewer();
-          update_console();
-          update_log();
-          // Update the key state
-        if (g_KeyPressed) {
-            ExampleAppLog& log = GetExampleAppLog();
-            log.AddLog("Key pressed: %d\n", g_KeyPressedCode);
-            g_KeyPressed = false;
-            g_KeyPressedCode = -1;
-        }
-
-      }
-
+        ed::DestroyEditor(m_Context);
     }
 
-    static void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+    void OnFrame(float deltaTime) override
     {
-      if (action == GLFW_PRESS) {
-          g_KeyPressed = true;
-          g_KeyPressedCode = key;
-      }
+        auto& io = ImGui::GetIO();
+
+        ImGui::Text("FPS: %.2f (%.2gms)", io.Framerate, io.Framerate ? 1000.0f / io.Framerate : 0.0f);
+
+        ImGui::Separator();
+
+        ed::SetCurrentEditor(m_Context);
+        ed::Begin("My Editor", ImVec2(0.0, 0.0f));
+        int uniqueId = 1;
+        // Start drawing nodes.
+        ed::BeginNode(uniqueId++);
+            ImGui::Text("Node A");
+            ed::BeginPin(uniqueId++, ed::PinKind::Input);
+                ImGui::Text("-> In");
+            ed::EndPin();
+            ImGui::SameLine();
+            ed::BeginPin(uniqueId++, ed::PinKind::Output);
+                ImGui::Text("Out ->");
+            ed::EndPin();
+        ed::EndNode();
+        ed::End();
+        ed::SetCurrentEditor(nullptr);
+
+        //ImGui::ShowMetricsWindow();
     }
 
-  private:
-    static bool g_KeyPressed;
-    static int g_KeyPressedCode;
+    ed::EditorContext* m_Context = nullptr;
 };
 
-int main(int, char**)
+int Main(int argc, char** argv)
 {
-  MyApp app;
-  app.Run();
+    Example exampe("Simple", argc, argv);
 
-  return 0;
+    if (exampe.Create())
+        return exampe.Run();
+
+    return 0;
 }
-
-bool MyApp::g_KeyPressed    = false;
-int MyApp::g_KeyPressedCode = -1;
