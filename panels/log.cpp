@@ -1,4 +1,5 @@
-#include "../app.hpp"
+#pragma once
+// #include "../app.hpp"
 #include "log.h"
 
 void update_log()

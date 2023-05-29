@@ -6,6 +6,8 @@
 #include "panels/log.h"
 #include "panels/viewer.cpp"
 #include "panels/properties.cpp"
+#include <Windows.h>
+#include <GLFW/glfw3native.h>
 
 // Forward Declarations
 void ShowExampleAppLog(bool* p_open);
@@ -20,30 +22,52 @@ class MyApp : public App<MyApp>
 
     void StartUp()
     {
+      
     }
 
     void Update()
     {
-
-      // 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
       {
-          static float f = 0.0f;
-          static int counter = 0;
+          static bool dockspaceOpen = true;
+          // ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoTitleBar;
+          // window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+			    // window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+          // ImGui::SetNextWindowSizeConstraints(ImVec2(0, 0), ImVec2(FLT_MAX, FLT_MAX)); // Allow the window to resize freely
+          ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDocking;
+          ImGuiDockNodeFlags dockNodeFlags = ImGuiDockNodeFlags_NoDockingInCentralNode;
+          
+          // Make the ImGui window full size
+          ImGui::SetWindowSize(ImGui::GetMainViewport()->Size);
+          ImGui::SetNextWindowPos(ImVec2(0, 0));
+          ImGui::SetNextWindowSize(ImGui::GetMainViewport()->Size);
 
+          // ImGui::SetNextWindowSizeConstraints(ImVec2(0, 0), ImVec2(FLT_MAX, FLT_MAX));
+          ImGui::Begin("RSTools", &dockspaceOpen, ImGuiWindowFlags_NoTitleBar|  ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize); // main_window
+          // Get the DockSpace ID
+          ImGuiID dockspaceID = ImGui::GetID("MyDockSpace");
+          ImGui::DockSpace(dockspaceID, ImVec2(0, 0), ImGuiDockNodeFlags_PassthruCentralNode);
 
+          
+          ImGui::End(); // main_window
+          update_console();
+          update_log();
           update_toolbar();
           update_properties();
           update_node_graph();
           update_viewer();
-          update_console();
-          update_log();
+          
+          // Close the GLFW window when the ImGui window is closed
+          if (!dockspaceOpen)
+          {
+              glfwSetWindowShouldClose(window, GLFW_TRUE);
+          }
           // Update the key state
-        if (g_KeyPressed) {
-            ExampleAppLog& log = GetExampleAppLog();
-            log.AddLog("Key pressed: %d\n", g_KeyPressedCode);
-            g_KeyPressed = false;
-            g_KeyPressedCode = -1;
-        }
+          if (g_KeyPressed) {
+              ExampleAppLog& log = GetExampleAppLog();
+              log.AddLog("Key pressed: %d\n", g_KeyPressedCode);
+              g_KeyPressed = false;
+              g_KeyPressedCode = -1;
+          }
 
       }
 

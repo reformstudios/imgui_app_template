@@ -3,16 +3,26 @@
 #include "panels/log.h"
 #include <iostream>
 #include <cstdlib>
+#include <string>
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 #include <stdio.h>
 #define GL_SILENCE_DEPRECATION
 #include <GLFW/glfw3.h> // Will drag system OpenGL headers
+#include <Windows.h>
+#include <GLFW/glfw3native.h>
 
+bool shouldCloseWindow = false;
 
 static void glfw_error_callback(int error, const char* description)
 {
     fprintf(stderr, "GLFW Error %d: %s\n", error, description);
+}
+
+// Callback function for handling the window close event
+void GLFWWindowCloseCallback()
+{
+  shouldCloseWindow = true;
 }
 
 template <typename Derived>
@@ -45,16 +55,43 @@ class App
 #else
       // GL 3.0 + GLSL 130
       const char* glsl_version = "#version 130";
-      glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-      glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
-      //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
-      //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
+      // glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+      // glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+      glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4); // Use OpenGL 4.x context
+      glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+      glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);  // 3.2+ only
+      glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);            // 3.0+ only
 #endif
 
+      static ImGuiWindowFlags titlebar_flags =
+        ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse
+        | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove
+        | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoScrollbar
+        | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoScrollWithMouse;
+      // const ImGuiViewport* viewport = ImGui::GetMainViewport();
+
+      // prevent parent window title bar
+      // glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+
+      // configure window titlebar
+      glfwWindowHint(GLFW_DECORATED, GLFW_TRUE); // Enable window decorations
+      glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // Allow window resizing
+      glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_FALSE); // Disable transparent framebuffer
+      glfwWindowHint(GLFW_RED_BITS, 8); // 8 bits for red channel
+      glfwWindowHint(GLFW_GREEN_BITS, 8); // 8 bits for green channel
+      glfwWindowHint(GLFW_BLUE_BITS, 8); // 8 bits for blue channel
+      glfwWindowHint(GLFW_ALPHA_BITS, 8); // 8 bits for alpha channel
+      glfwWindowHint(GLFW_DEPTH_BITS, 24); // 24 bits for depth buffer
+      glfwWindowHint(GLFW_STENCIL_BITS, 8); // 8 bits for stencil buffer
+
+      glfwWindowHint(GLFW_SAMPLES, 0); // Disable multisampling
+      
+      
       // Create window with graphics context
-      window = glfwCreateWindow(1280, 720, app_name, nullptr, nullptr);
+      window = glfwCreateWindow(1280, 720, "Test", nullptr, nullptr);
       if (window == nullptr)
           std::exit(1);
+
       glfwMakeContextCurrent(window);
       glfwSwapInterval(1); // Enable vsync
 
@@ -126,17 +163,13 @@ class App
 
       // Fonts
       io.Fonts->AddFontDefault();
-      mainfont = io.Fonts->AddFontFromFileTTF( "/Users/patrickmacdonald/src/cpp/imgui_app_template/fonts/Verdana.ttf", 14.0f);
+      std::string mainFontPath = std::string(MAIN_FONT_PATH);
+      mainfont = io.Fonts->AddFontFromFileTTF( mainFontPath.c_str(), 14.0f);
       IM_ASSERT(mainfont != NULL);
-
 
       // Setup Platform/Renderer backends
       ImGui_ImplGlfw_InitForOpenGL(window, true);
       ImGui_ImplOpenGL3_Init(glsl_version);
-
-      // Our state
-      bool show_demo_window = true;
-      bool show_another_window = true;
 
     }
 
@@ -159,23 +192,29 @@ class App
       // Main Loop
       while(!glfwWindowShouldClose(window))
       {
+        // Check if the window close flag is set
+        if (shouldCloseWindow)
+        {
+            glfwSetWindowShouldClose(window, GLFW_TRUE);
+        }
+
         glfwPollEvents();
-
-
 
         // Start the Dear ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
+
+        // Set global default font
         ImGui::PushFont(mainfont);
 
         // Enable docking. This needs to be above all other windows for them to be dockable.
         ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
 
+        // Main update loop
         Update();
+
         ImGui::PopFont();
-
-
 
         // Rendering
         ImGui::Render();
@@ -210,10 +249,11 @@ class App
     ImGuiIO io;
 
     ImFont* mainfont;
-
-  private:
-    // Private window pointer
+    // window pointer
     GLFWwindow* window;
+    bool shouldCloseWindow = false;
+  private:
+    
 
 
 

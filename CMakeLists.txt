@@ -47,7 +47,7 @@ add_executable(${EXECUTABLE_NAME}
 
         ${imgui_SOURCE_DIR}/imgui.cpp
         ${imgui_SOURCE_DIR}/imgui.h
-        ${imgui_SOURCE_DIR}/imgui_demo.cpp
+        # ${imgui_SOURCE_DIR}/imgui_demo.cpp
         ${imgui_SOURCE_DIR}/imgui_draw.cpp
         ${imgui_SOURCE_DIR}/imgui_internal.h
         ${imgui_SOURCE_DIR}/imgui_tables.cpp
@@ -87,4 +87,13 @@ target_link_libraries(${EXECUTABLE_NAME}
         libglew_static
         $<$<CXX_COMPILER_ID:GNU>:opengl32.a>
         $<$<CXX_COMPILER_ID:MSVC>:opengl32.lib>
-        )
+)
+
+## ------------------------------------------
+# IMGUI Font paths
+
+# Set the absolute path to the font file
+set(MAIN_FONT_PATH "${CMAKE_SOURCE_DIR}/fonts/Verdana.ttf")
+
+# Add a C++ preprocessor definition
+add_definitions(-DMAIN_FONT_PATH="${MAIN_FONT_PATH}")
