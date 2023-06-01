@@ -13,51 +13,6 @@
 
 #include <cmath>
 
-
-// void DemoImplot()
-// {
-//     static std::vector<double> x, y1, y2;
-//     if (x.empty())
-//     {
-//         double pi = 3.1415;
-//         for (int i = 0; i < 1000; ++i)
-//         {
-//             double x_ = pi * 4. * (double)i / 1000.;
-//             x.push_back(x_);
-//             y1.push_back(cos(x_));
-//             y2.push_back(sin(x_));
-//         }
-//     }
-
-//     ImGuiMd::Render("# This is the plot of _cosinus_ and *sinus*");
-//     if (ImPlot::BeginPlot("Plot"))
-//     {
-//         ImPlot::PlotLine("y1", x.data(), y1.data(), x.size());
-//         ImPlot::PlotLine("y2", x.data(), y2.data(), x.size());
-//         ImPlot::EndPlot();
-//     }
-// }
-
-
-// void Gui()
-// {
-//     static bool dockspaceOpen = true;
-//     ImGui::SetWindowSize(ImGui::GetMainViewport()->Size);
-//     ImGui::SetNextWindowPos(ImVec2(0, 0));
-//     ImGui::SetNextWindowSize(ImGui::GetMainViewport()->Size);
-//     // ImGui::Begin("RSTools", &dockspaceOpen, ImGuiWindowFlags_NoTitleBar|  ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize); // main_window
-//     ImGui::Begin("RSTools", &dockspaceOpen, ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize); // main_window
-//     ImGuiID dockspaceID = ImGui::GetID("MyDockSpace");
-//     ImGui::DockSpace(dockspaceID, ImVec2(0, 0), ImGuiDockNodeFlags_PassthruCentralNode);
-//     ImGui::End(); // main_window
-//     update_console();
-//     update_log();
-//     update_toolbar();
-//     update_properties();
-//     update_node_graph();
-//     update_viewer();
-// }
-
 struct Example
     //: public Application
 {
@@ -71,8 +26,6 @@ struct Example
         ed::PinId  InputId;
         ed::PinId  OutputId;
     };
-
-    // using Application::Application;
 
     void OnStart() //override
     {
@@ -114,13 +67,7 @@ struct Example
         ImGui::Begin("RSTools", &dockspaceOpen, ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize); // main_window
         ImGuiID dockspaceID = ImGui::GetID("MyDockSpace");
         ImGui::DockSpace(dockspaceID, ImVec2(0, 0), ImGuiDockNodeFlags_PassthruCentralNode);
-        
-        
 
-        // ImGui::Text("FPS: %.2f (%.2gms)", io.Framerate, io.Framerate ? 1000.0f / io.Framerate : 0.0f);
-
-        // ImGui::Separator();
-        
         ed::SetCurrentEditor(m_Context);
         update_console();
         update_log();
@@ -280,20 +227,6 @@ struct Example
     ImVector<LinkInfo>   m_Links;                // List of live links. It is dynamic unless you want to create read-only view over nodes.
     int                  m_NextLinkId = 100;     // Counter to help generate link ids. In real application this will probably based on pointer to user data structure.
 };
-
-// int main(int , char *[])
-// {
-//     HelloImGui::SimpleRunnerParams runnnerParams;
-//     runnnerParams.guiFunction = Gui;
-//     runnnerParams.windowSize = {1920, 1080};
-
-//     ImmApp::AddOnsParams addOnsParams;
-//     addOnsParams.withMarkdown = true;
-//     addOnsParams.withImplot = true;
-
-//     ImmApp::Run(runnnerParams, addOnsParams);
-//     return 0;
-// }
 
 int main(int , char *[])
 {
