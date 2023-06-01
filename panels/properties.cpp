@@ -1,4 +1,3 @@
-#include "../app.hpp"
 
 void update_properties()
 {

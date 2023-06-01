@@ -1,99 +1,36 @@
-cmake_minimum_required(VERSION 3.17)
-project(imgui_app_template)
+cmake_minimum_required(VERSION 3.12)
+project(helloworld_with_helloimgui)
+set(CMAKE_CXX_STANDARD 17)
 
-#-----------------------------------------------------------------------------------------------------------------------
-# Download dependencies for GitHub
+
+##########################################################
+# Prepare imgui_bundle during configure time
+##########################################################
+# Download imgui_bundle
 include(FetchContent)
-
+Set(FETCHCONTENT_QUIET FALSE)
 FetchContent_Declare(
-        glew
-        GIT_REPOSITORY https://github.com/Perlmint/glew-cmake.git
-        GIT_TAG glew-cmake-2.2.0
+    imgui_bundle
+    GIT_REPOSITORY https://github.com/pthom/imgui_bundle.git
+    GIT_PROGRESS TRUE
+    # Enter the desired git tag below
+    GIT_TAG main
 )
+FetchContent_MakeAvailable(imgui_bundle)
 
-FetchContent_Declare(
-        glfw
-        GIT_REPOSITORY https://github.com/glfw/glfw
-        GIT_TAG 3.3.8
-)
+# Make cmake function `imgui_bundle_add_app` available
+list(APPEND CMAKE_MODULE_PATH ${IMGUIBUNDLE_CMAKE_PATH})
+include(imgui_bundle_add_app)
 
-FetchContent_Declare(
-        imgui
-        GIT_REPOSITORY https://github.com/ocornut/imgui
-        GIT_TAG docking
-)
-
-FetchContent_MakeAvailable(glew glfw imgui)
-
-# FetchContent_Declare() normally supports EXCLUDE_FROM_ALL but apparently there is a bug
-# See https://gitlab.kitware.com/cmake/cmake/-/issues/20167
-# As a workaround, we exclude the directories manually
-set_property(DIRECTORY ${glew_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL YES)
-set_property(DIRECTORY ${glfw_SOURCE_DIR} PROPERTY EXCLUDE_FROM_ALL YES)
-
-#-----------------------------------------------------------------------------------------------------------------------
-# Configure C++ version
-
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
-
-#-----------------------------------------------------------------------------------------------------------------------
-# Create executable
-set(EXECUTABLE_NAME ${PROJECT_NAME})
-
-add_executable(${EXECUTABLE_NAME}
-        main.cpp
-
-        ${imgui_SOURCE_DIR}/imgui.cpp
-        ${imgui_SOURCE_DIR}/imgui.h
-        # ${imgui_SOURCE_DIR}/imgui_demo.cpp
-        ${imgui_SOURCE_DIR}/imgui_draw.cpp
-        ${imgui_SOURCE_DIR}/imgui_internal.h
-        ${imgui_SOURCE_DIR}/imgui_tables.cpp
-        ${imgui_SOURCE_DIR}/imgui_widgets.cpp
-
-        ${imgui_SOURCE_DIR}/backends/imgui_impl_glfw.cpp
-        ${imgui_SOURCE_DIR}/backends/imgui_impl_opengl3.cpp
-        ${imgui_SOURCE_DIR}/backends/imgui_impl_glfw.h
+# Uncomment the next line if you which to also automatically fetch and compile OpenCV for immvision support
+# set(IMMVISION_FETCH_OPENCV ON)
 
 
-        )
+##########################################################
+# Build your app
+##########################################################
+# Call imgui_bundle_add_app
+imgui_bundle_add_app(hello_world hello_world.cpp)
 
-# Add options for warning
-if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    target_compile_options(${EXECUTABLE_NAME}
-            PRIVATE
-            -Wall -Wextra -pedantic
-            )
-endif ()
-
-# Add a define to use the static version of Glew
-target_compile_definitions(${EXECUTABLE_NAME}
-        PRIVATE
-        GLEW_STATIC
-        )
-
-# Set the include path
-target_include_directories(${EXECUTABLE_NAME}
-        PRIVATE
-        ${imgui_SOURCE_DIR}/
-        )
-
-# Link against the appropriate libraries
-target_link_libraries(${EXECUTABLE_NAME}
-        PRIVATE
-        glfw
-        libglew_static
-        $<$<CXX_COMPILER_ID:GNU>:opengl32.a>
-        $<$<CXX_COMPILER_ID:MSVC>:opengl32.lib>
-)
-
-## ------------------------------------------
-# IMGUI Font paths
-
-# Set the absolute path to the font file
-set(MAIN_FONT_PATH "${CMAKE_SOURCE_DIR}/fonts/Verdana.ttf")
-
-# Add a C++ preprocessor definition
-add_definitions(-DMAIN_FONT_PATH="${MAIN_FONT_PATH}")
+# Now you can build your app with
+#     mkdir build && cd build && cmake .. && cmake --build .
